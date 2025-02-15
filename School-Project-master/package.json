@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "@ramonak/react-progress-bar": "^5.3.0",
+    "react-google-charts": "^5.2.1",
+    "validator": "^13.12.0"
+  }
+}
