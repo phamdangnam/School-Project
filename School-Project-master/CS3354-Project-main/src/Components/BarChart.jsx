@@ -1,15 +1,15 @@
 /* eslint-disable react/prop-types */
 import { PureComponent } from "react";
 import {
-  BarChart,
+  ComposedChart,
   Bar,
-  Rectangle,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
   Legend,
   ResponsiveContainer,
+  Line,
 } from "recharts";
 
 export default class MyChart extends PureComponent {
@@ -36,28 +36,15 @@ export default class MyChart extends PureComponent {
 
     return (
       <ResponsiveContainer width="100%" height="80%">
-        <BarChart
-          width={500}
-          height={300}
-          data={combinedTransactions} // Use the combined data
-          margin={{
-            top: 5,
-            right: 30,
-            left: 20,
-            bottom: 5,
-          }}
-        >
-          <CartesianGrid strokeDasharray="3 3" />
+        <ComposedChart width={730} height={250} data={combinedTransactions}>
           <XAxis dataKey="date" />
           <YAxis />
           <Tooltip />
           <Legend />
-          <Bar
-            dataKey="amount"
-            fill="#8884d8"
-            activeBar={<Rectangle fill="pink" stroke="blue" />}
-          />
-        </BarChart>
+          <CartesianGrid stroke="#f5f5f5" />
+          <Bar dataKey="amount" barSize={20} fill="#413ea0" />
+          <Line type="monotone" dataKey="amount" stroke="#ff7300" />
+        </ComposedChart>
       </ResponsiveContainer>
     );
   }
