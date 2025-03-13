@@ -7,10 +7,15 @@ import { RiMoneyDollarCircleFill } from "react-icons/ri";
 import { RiMenuAddFill } from "react-icons/ri";
 import { FaDeleteLeft } from "react-icons/fa6";
 import { MdDelete } from "react-icons/md";
-import { format, addDays } from "date-fns";
+import { format, addDays, subDays } from "date-fns";
 import MyChart from "./BarChart.jsx";
 import validator from "validator";
-
+import {
+  saveBackendTransaction,
+  getBackendTransactions,
+  deleteBackendTransaction,
+} from "../API/TransactionService.js";
+import DatePicker from "react-datepicker";
 const ContentDetail = () => {
   const [showForm, setShowForm] = useState(false);
   const [transactions, setTransactions] = useState([]);
@@ -22,32 +27,65 @@ const ContentDetail = () => {
       date: "",
     },
   ]);
-  const { categories, amount } = useContext(AppContext);
+  const { categories, amount, messages, startDate, endDate, setMessages } =
+    useContext(AppContext);
   const { id } = useParams();
-  let category = categories[id];
-  let allowance = (category.percentage * amount) / 100;
+  let category = categories[id].category;
+  let categoryPercentage = categories[id].percentage;
+  let allowance = (categoryPercentage * amount) / 100;
   const [saveDisabled, setSaveDisabled] = useState(true);
 
+  // Percentage monitoring
   useEffect(() => {
-    const dateIsValid = (word) => {
-      const tomorrow = format(addDays(new Date(), 1), "MM/dd/yyyy");
-      if (!word || typeof word !== "string") {
-        return false;
+    if (currentPercentage >= 80) {
+      let newMessages = [...messages];
+      let existingMessage = messages.filter((message) =>
+        message.includes(
+          `You've almost reach your monthly allowance in ${category} `
+        )
+      );
+      if (existingMessage.length != 0)
+        newMessages.splice(messages.indexOf(existingMessage), 1);
+      newMessages.push(
+        `You've almost reach your monthly allowance in ${category} 😥 (💲${Math.round(
+          (allowance * currentPercentage) / 100
+        )}/💲${allowance}) `
+      );
+      setMessages(newMessages);
+    }
+    console.log(messages);
+  }, [currentPercentage]);
+
+  // Page load fetch
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      const response = await getBackendTransactions(category);
+      const transactionsWithCategory = response.data;
+      const transactions = transactionsWithCategory.map(
+        // eslint-disable-next-line no-unused-vars
+        ({ category, ...rest }) => rest
+      );
+
+      setTransactions(transactions);
+      let amount = 0;
+      for (const transaction of transactions) {
+        amount += Number(transaction.amount);
       }
-      const regex = /^(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])\/\d{4}$/;
-      if (!regex.test(word)) {
-        return false;
-      }
-      return validator.isBefore(word, tomorrow);
+      setCurrentPercentage((amount / allowance) * 100);
     };
+    fetchTransactions();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Form validation
+  useEffect(() => {
     const amountIsValid = (word) => validator.isDecimal(word);
     const validForm = () => {
       if (formTransactions.length === 0) return false;
       for (let transaction of formTransactions) {
         if (
           transaction.description.trim() === "" ||
-          !amountIsValid(transaction.amount) ||
-          !dateIsValid(transaction.date)
+          !amountIsValid(transaction.amount)
         ) {
           return false;
         }
@@ -74,6 +112,13 @@ const ContentDetail = () => {
     let updatedTransactions = [...transactions];
     updatedTransactions.splice(index, 1);
     setTransactions(updatedTransactions);
+    deleteBackendTransaction(transactions[index].description);
+
+    let newAmount = 0;
+    for (const transaction of updatedTransactions) {
+      newAmount += Number(transaction.amount);
+    }
+    setCurrentPercentage((newAmount / allowance) * 100);
   };
 
   const deleteFormTransaction = (index) => {
@@ -91,7 +136,11 @@ const ContentDetail = () => {
     for (const transaction of updatedTransactions) {
       newAmount += Number(transaction.amount);
     }
-    setCurrentPercentage((newAmount / amount) * 100);
+    setCurrentPercentage((newAmount / allowance) * 100);
+
+    for (let transaction of formTransactions) {
+      saveBackendTransaction({ category, ...transaction });
+    }
 
     const blankFormTransactions = [
       {
@@ -113,7 +162,7 @@ const ContentDetail = () => {
             <div className="wallet-title">
               <RiMoneyDollarCircleFill className="dollarIcon" />
               <div>
-                <h2>{category.category}</h2>
+                <h2>{category}</h2>
               </div>
             </div>
           </div>
@@ -121,9 +170,9 @@ const ContentDetail = () => {
           <div className="transaction-date">
             <ProgressBar
               completed={currentPercentage}
-              customLabel={`$${
+              customLabel={`$${Math.round(
                 (currentPercentage * allowance) / 100
-              }/$${allowance}`}
+              )}/$${allowance}`}
               height="40px"
               borderRadius="22px"
               bgColor="#00b4d8"
@@ -169,15 +218,27 @@ const ContentDetail = () => {
                     </div>
                     <div id="dateDiv">
                       <h4>Date:</h4>
-                      <input
+                      <DatePicker
                         id="formInput"
-                        type="text"
-                        value={item.date}
-                        onChange={(e) => {
+                        selected={item.date}
+                        onChange={(date) => {
                           const updatedFormTransactions = [...formTransactions];
-                          updatedFormTransactions[index].date = e.target.value;
+                          updatedFormTransactions[index].date = format(
+                            date,
+                            "MM/dd/yyyy"
+                          );
                           setFormTransactions(updatedFormTransactions);
                         }}
+                        excludeDateIntervals={[
+                          {
+                            start: subDays(startDate, 9999),
+                            end: subDays(startDate, 1),
+                          },
+                          {
+                            start: addDays(endDate, 1),
+                            end: addDays(endDate, 9999),
+                          },
+                        ]}
                       />
                     </div>
                     <div id="deleteButton">
@@ -200,9 +261,8 @@ const ContentDetail = () => {
                     Save
                   </button>
                   <button
-                    id={saveDisabled ? "disabledButton" : "cancelButton"}
+                    id="cancelButton"
                     type="button"
-                    disabled={saveDisabled}
                     onClick={() => setShowForm(false)}
                   >
                     Cancel

@@ -13,18 +13,16 @@
 #formContainer h3 {
   margin-right: 8px;
 }
-#totalInput {
-  height: 98%;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
 #percentageDiv,
-#categoryDiv {
+#categoryDiv,
+#amountDiv,
+#dateDiv {
   margin-right: 10px;
 }
 #percentageDiv h4,
-#categoryDiv h4 {
+#categoryDiv h4,
+#amountDiv h4,
+#dateDiv h4 {
   color: #1e293b;
   font-weight: bold;
   margin-top: 5px;
@@ -50,6 +48,7 @@
   padding: 8px;
   border: 1px solid #ccc;
   border-radius: 4px;
+  font-size: 13px;
 }
 #formButton {
   cursor: pointer;
@@ -128,6 +127,68 @@ body {
   font-weight: 550;
 }
 
+/* Drop-down Notif */
+@keyframes slideDown {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+#notif {
+  display: flex;
+  justify-content: right;
+  position: relative;
+  cursor: pointer;
+}
+
+.notifButton {
+  font-size: 24px;
+}
+
+.dropdown {
+  position: absolute;
+  top: 50px;
+  right: 0;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  width: 400px;
+  padding: 10px 0;
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(-10px);
+  animation: slideDown 0.6s forwards;
+}
+.dropdown.show {
+  visibility: visible;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.dropdown-item {
+  padding: 10px;
+  font-size: 16px;
+  font-family: "Lato", sans-serif;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.dropdown-item:last-child {
+  border-bottom: none;
+}
+
+.dropdown-item:hover {
+  background-color: #f9f9f9;
+  cursor: pointer;
+}
+
+/* Edit Section */
 #edit {
   font-weight: bold;
   display: grid;
@@ -150,11 +211,32 @@ body {
   transition: all 0.3s ease;
 }
 
+.notifButton {
+  color: #00b4d8;
+  padding-top: 5px;
+  font-size: 2.3em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
 .editButton:hover {
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0), 0 15px 30px rgba(0, 0, 0, 0);
   transform: translateY(-5px);
 }
+.custom-datepicker {
+  font-size: 13px;
+  padding: 8px;
+  width: 100%;
+  height: 15.2px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
 
+.datepicker-wrapper {
+  width: 90%;
+}
 #input {
   width: 35em;
   height: 3em;

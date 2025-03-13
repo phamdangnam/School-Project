@@ -1,25 +1,51 @@
 import "../Styling/Header.css";
 import { homeRoute } from "../Data/routes";
 import { useState, useContext, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { BiEditAlt } from "react-icons/bi";
 import { RiMenuAddFill } from "react-icons/ri";
 import { MdDelete } from "react-icons/md";
 import { AppContext } from "../AppProvider.jsx";
+import { IoMdNotificationsOutline } from "react-icons/io";
 import validator from "validator";
 import {
   saveBackendCategory,
   deleteBackendCategory,
   getBackendCategories,
 } from "../API/CategoryService.js";
-import { saveBackendAmount, getBackendAmount } from "../API/AmountService.js";
+import {
+  saveBackendAmountAndDate,
+  getBackendAmountAndDate,
+} from "../API/AmountDateService.js";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { format } from "date-fns";
+
 const Header = () => {
+  const pathName = useLocation().pathname;
   const [showForm, setShowForm] = useState(false);
   const [saveDisabled, setSaveDisabled] = useState(true);
 
-  const { categories, amount, setCategories, setAmount } =
-    useContext(AppContext);
+  const {
+    categories,
+    amount,
+    messages,
+    startDate,
+    endDate,
+    setCategories,
+    setAmount,
+    setStartDate,
+    setEndDate,
+  } = useContext(AppContext);
 
+  const [showDropdown, setShowDropdown] = useState(false);
+  const onChange = (dates) => {
+    const [start, end] = dates;
+    setStartDate(start);
+    setEndDate(end);
+  };
+
+  // Page load fetch
   useEffect(() => {
     const fetchCategories = async () => {
       const response = await getBackendCategories();
@@ -28,8 +54,12 @@ const Header = () => {
       console.log(categories);
     };
     const fetchAmount = async () => {
-      const response = await getBackendAmount();
-      const amount = response.data;
+      const response = await getBackendAmountAndDate();
+      const amount = response.data.amount;
+      const dateRange = response.data.dateRange;
+      let [start, end] = dateRange.split(" ");
+      setStartDate(start);
+      setEndDate(end);
       setAmount(amount.toString());
       console.log(amount);
     };
@@ -38,6 +68,7 @@ const Header = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Form validation
   useEffect(() => {
     const percentageIsValid = () => {
       let total = 0;
@@ -79,7 +110,9 @@ const Header = () => {
 
   const handleSubmit = (e) => {
     for (let category of categories) saveBackendCategory(category); // Saving category to Backend
-    saveBackendAmount(amount);
+    let dateRange =
+      format(startDate, "MM/dd/yyyy") + " " + format(endDate, "MM/dd/yyyy");
+    saveBackendAmountAndDate(amount, dateRange);
     e.preventDefault();
     setShowForm(false);
   };
@@ -98,24 +131,59 @@ const Header = () => {
           </div>
           {/*<!-- COLLECTIONS ON WEBSITE --> */}
           <div id="edit">
-            <Link onClick={() => setShowForm(true)}>
-              <BiEditAlt className="editButton" />
-            </Link>
+            {pathName == "/" ? (
+              <Link onClick={() => setShowForm(true)}>
+                <BiEditAlt className="editButton" />
+              </Link>
+            ) : (
+              ""
+            )}
+          </div>
+          <div id="notif" onClick={() => setShowDropdown(!showDropdown)}>
+            <IoMdNotificationsOutline className="notifButton" />
+            {showDropdown && (
+              <div className={`dropdown ${showDropdown ? "show" : ""}`}>
+                {messages.length > 0 ? (
+                  messages.map((item) => (
+                    <div key={item.id} className="dropdown-item">
+                      {item}
+                    </div>
+                  ))
+                ) : (
+                  <div className="dropdown-item">No notifications</div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </section>
+
       {showForm && (
         <div id="formContainer">
           <div id="formBox">
             <form id="form" onSubmit={handleSubmit}>
               <div id="formDiv">
-                <h3 id="formLabel">Amount:</h3>
-                <input
-                  id="totalInput"
-                  type="text"
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
-                />
+                <div id="amountDiv">
+                  <h4 id="formLabel">Amount:</h4>
+                  <input
+                    id="formInput"
+                    type="text"
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
+                  />
+                </div>
+                <div id="dateDiv">
+                  <h4 id="formLabel">Date:</h4>
+                  <DatePicker
+                    selected={startDate}
+                    onChange={onChange}
+                    startDate={startDate}
+                    endDate={endDate}
+                    selectsRange
+                    className="custom-datepicker"
+                    wrapperClassName="datepicker-wrapper"
+                  />
+                </div>
               </div>
 
               {categories.map((item, index) => (

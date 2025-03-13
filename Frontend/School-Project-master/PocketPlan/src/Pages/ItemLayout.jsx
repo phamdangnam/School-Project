@@ -3,7 +3,13 @@ import Header from "../Components/Header.jsx";
 import ContentDetail from "../Components/ContentDetail.jsx";
 
 const ItemLayout = () => {
-  return <>{<ContentDetail></ContentDetail>}</>;
+  return (
+    <>
+      <Header></Header>
+      <ContentDetail></ContentDetail>
+      <Footer></Footer>
+    </>
+  );
 };
 
 export default ItemLayout;

@@ -7,10 +7,24 @@ export const AppContext = createContext();
 
 function AppProvider() {
   const [amount, setAmount] = useState("");
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(null);
   const [categories, setCategories] = useState([]);
+  const [messages, setMessages] = useState([]);
   return (
     <AppContext.Provider
-      value={{ amount, setAmount, categories, setCategories }}
+      value={{
+        amount,
+        setAmount,
+        categories,
+        setCategories,
+        messages,
+        setMessages,
+        startDate,
+        setStartDate,
+        endDate,
+        setEndDate,
+      }}
     >
       <Router>
         <Routes>
