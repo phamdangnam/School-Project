@@ -1,0 +1,7 @@
+Unsplash API
+API Endpoint = https://api.unsplash.com/search/collections?page=1&query=office
+Access Key = 49D1vP6L1n7jL05-rpMXMONwlT_zL-bABOG84zdE_1g
+Secret Key = Y29XBXvPibgtB6IAO54wr_SQFKMRILlIOYMkzkhoO7U   
+
+Gemini API
+API Key = AIzaSyDpCjKWQQ4uVfqPfbqI7ac2O5zIqFYTei8

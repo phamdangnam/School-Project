@@ -1,0 +1,258 @@
+#formContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+#formContainer h3 {
+  margin-right: 8px;
+}
+#percentageDiv,
+#categoryDiv,
+#amountDiv,
+#dateDiv {
+  margin-right: 10px;
+}
+#percentageDiv h4,
+#categoryDiv h4,
+#amountDiv h4,
+#dateDiv h4 {
+  color: #1e293b;
+  font-weight: bold;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+#formBox {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  min-width: 300px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+#formDiv {
+  display: flex;
+  margin-bottom: 15px;
+}
+#formLabel {
+  color: #1e293b;
+  display: block;
+  margin-bottom: 5px;
+}
+#formInput {
+  width: 90%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 13px;
+}
+#formButton {
+  cursor: pointer;
+  background-color: #00b4d8;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 4px;
+  border: none;
+}
+#cancelButton {
+  cursor: pointer;
+  background-color: #1e293b;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 4px;
+  border: none;
+}
+#disabledButton {
+  background-color: #1e293b;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 4px;
+  border: none;
+}
+#deleteButton {
+  padding-top: 30px;
+  font-size: 27px;
+  color: rgb(229, 59, 82);
+  cursor: pointer;
+}
+#addIcon {
+  font-size: 24px;
+  color: #1e293b;
+  cursor: pointer;
+}
+#addText {
+  color: #1e293b;
+  margin-top: 5px;
+  margin-left: 10px;
+}
+
+body {
+  margin: 0;
+}
+#container {
+  background-color: #252525;
+  margin: auto;
+  text-align: center;
+  width: 100vw;
+  display: grid;
+  grid-gap: 10px;
+  grid-template-columns: 1.5fr 1.5fr 5fr 1fr;
+  font-family: "Lato", sans-serif;
+  z-index: 1;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 40px;
+  box-sizing: border-box;
+  position: fixed;
+  box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.302),
+    0 2px 6px 2px rgba(60, 64, 67, 0.149);
+}
+#appName {
+  font-size: 40px;
+  font-family: "Lato", sans-serif;
+}
+#appName .webTitle {
+  text-decoration: none;
+}
+#appName .pocketText {
+  font-weight: 900;
+  color: #00b4d8;
+}
+#appName .planText {
+  color: white;
+  font-weight: 550;
+}
+
+/* Drop-down Notif */
+@keyframes slideDown {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+#notif {
+  display: flex;
+  justify-content: right;
+  position: relative;
+  cursor: pointer;
+}
+
+.notifButton {
+  font-size: 24px;
+}
+
+.dropdown {
+  position: absolute;
+  top: 50px;
+  right: 0;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  width: 400px;
+  padding: 10px 0;
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(-10px);
+  animation: slideDown 0.6s forwards;
+}
+.dropdown.show {
+  visibility: visible;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.dropdown-item {
+  padding: 10px;
+  font-size: 16px;
+  font-family: "Lato", sans-serif;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.dropdown-item:last-child {
+  border-bottom: none;
+}
+
+.dropdown-item:hover {
+  background-color: #f9f9f9;
+  cursor: pointer;
+}
+
+/* Edit Section */
+#edit {
+  font-weight: bold;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+#edit a {
+  width: 50px;
+  text-decoration: none;
+  color: white;
+  background: none;
+}
+
+.editButton {
+  color: #00b4d8;
+  padding-top: 5px;
+  font-size: 2.2em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.notifButton {
+  color: #00b4d8;
+  padding-top: 5px;
+  font-size: 2.3em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.editButton:hover {
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0), 0 15px 30px rgba(0, 0, 0, 0);
+  transform: translateY(-5px);
+}
+.custom-datepicker {
+  font-size: 13px;
+  padding: 8px;
+  width: 100%;
+  height: 15.2px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.datepicker-wrapper {
+  width: 90%;
+}
+#input {
+  width: 35em;
+  height: 3em;
+  padding: 2px 50px;
+  background-color: rgb(241, 241, 241);
+  border: none;
+  border-radius: 5px;
+}
+#input::placeholder {
+  font-weight: bold;
+}
+#input:focus {
+  outline: none;
+}
+#user a {
+  color: rgb(29, 29, 29);
+}
