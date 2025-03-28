@@ -69,13 +69,23 @@ const ContentDetail = () => {
         // eslint-disable-next-line no-unused-vars
         ({ category, ...rest }) => rest
       );
-      console.log(filterDate);
-      if (!validator.isEmpty(filterDate)) {
+      if (filterDate != "") {
+        const date = format(filterDate, "MM/dd/yyyy");
         const filteredTransactions = transactions.filter(
-          (transaction) => transaction.date == filterDate
+          (transaction) => transaction.date == date
         );
         setTransactions(filteredTransactions);
+        let amount = 0;
+        for (const transaction of filteredTransactions) {
+          amount += Number(transaction.amount);
+        }
+        setCurrentPercentage((amount / allowance) * 100);
       } else {
+        let amount = 0;
+        for (const transaction of transactions) {
+          amount += Number(transaction.amount);
+        }
+        setCurrentPercentage((amount / allowance) * 100);
         setTransactions(transactions);
       }
     };
@@ -360,7 +370,13 @@ const ContentDetail = () => {
                   },
                 ]}
               />
-              <BsEraserFill className="clear-btn" />
+              <BsEraserFill
+                className="clear-btn"
+                onClick={() => {
+                  let clear = "";
+                  setFilterDate(clear);
+                }}
+              />
             </div>
             {transactions.map((transaction, index) => (
               <div key={index} className="transaction-item">
